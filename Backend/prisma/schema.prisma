@@ -21,3 +21,112 @@ datasource db {
 
 // npx prisma studio => for visualizing the database
 // npx prisma generate => for generating the client
+
+// i have added "createdAt" in every model so that we can rateLimit the user from adding notes/canteenReviews/items
+
+
+model User {
+  id             String          @id @default(uuid())
+  username       String
+  UID            String          @unique
+  password       String
+  profilePic     String?
+  role           Role            @default(STUDENT)
+  isVerified     Boolean         @default(false)
+  OTP            String?
+  OTPRequestedAt DateTime?       @default(now())
+  OTPExpiry      DateTime?
+
+  // Relations
+  senior         Senior?
+  items          Item[]
+  itemRequests   ItemRequest[]
+  canteenReviews CanteenReview[]
+  notes          Note[]
+  messagesSent   Message[]
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+  SENIOR
+}
+
+model Senior {
+  id         String @id @default(uuid())
+  userId     String @unique
+  user       User   @relation(fields: [userId], references: [id])
+  experience String
+  resumeUrl  String
+}
+
+model Message {
+  id         String      @id @default(uuid())
+  message    String
+  senderId   String
+  sender     User     @relation(fields: [senderId], references: [id])
+  createdAt  DateTime @default(now())
+
+  replyToId  String?
+  replyTo    Message? @relation("ReplyThread", fields: [replyToId], references: [id])
+  replies    Message[] @relation("ReplyThread")
+}
+
+model Item {
+  id           String        @id @default(uuid())
+  title        String
+  description  String?
+  price        Float
+  imageUrl     String?
+  status       ItemStatus @default(AVAILABLE)
+  daysToRent   Int?
+  ownerId      String
+  owner        User       @relation(fields: [ownerId], references: [id])
+  createdAt    DateTime   @default(now())
+}
+
+enum ItemStatus {
+  AVAILABLE
+  SOLD
+  FORRENT
+}
+
+model ItemRequest {
+  id          Int      @id @default(autoincrement())
+  itemName    String
+  description String
+  imageUrl    String?
+  requesterId String
+  requester   User     @relation(fields: [requesterId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Canteen {
+  id           Int             @id @default(autoincrement())
+  canteenName  String
+  menuUrl      String?
+  reviews      CanteenReview[]
+}
+
+model CanteenReview {
+  id            Int      @id @default(autoincrement())
+  rating        Int
+  messageReview String
+  foodTried     String
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  canteenId     Int
+  canteen       Canteen  @relation(fields: [canteenId], references: [id])
+  createdAt     DateTime @default(now())
+}
+
+model Note {
+  id         Int      @id @default(autoincrement())
+  pdfName    String
+  semester   Int
+  subject    String
+  fileUrl    String
+  uploaderId String
+  uploader   User     @relation(fields: [uploaderId], references: [id])
+  createdAt  DateTime @default(now())
+}
