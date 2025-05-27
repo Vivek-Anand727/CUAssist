@@ -14,4 +14,4 @@ app.use('/auth', authRoutes);
 
 
 app.use("/api/v1/", homeRouter);
-app.listen(3000);
+app.listen(5000);

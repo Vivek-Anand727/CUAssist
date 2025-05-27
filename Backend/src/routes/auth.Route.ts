@@ -39,7 +39,7 @@ router.post('/signup', (req: Request, res: Response) => {
         return res.status(400).json({ message: 'Username, UID, password, and role are required!' });
       }
 
-      // UID validation: length 10, pattern like 23BCS11598 (23 + 3 letters + 5 digits)
+      // UID validation: length 10, pattern like 23BCS11598 (2 digits + 3 letters + 5 digits)
       const uidRegex = /^\d{2}[a-zA-Z]{3}\d{5}$/;
       if (UID.length !== 10) {
         return res.status(400).json({ message: 'UID must be exactly 10 or 11 characters long' });

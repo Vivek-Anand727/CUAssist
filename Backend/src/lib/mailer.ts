@@ -27,7 +27,6 @@ export const sendVerificationEmail = async (to: string, otp: string) => {
     console.log(`Verification email sent to ${to}`);
   } catch (error) {
     console.error(`Error sending verification email to ${to}:`, error);
-    // Throw error further so that calling function can handle it too if needed
     throw error;
   }
 };
