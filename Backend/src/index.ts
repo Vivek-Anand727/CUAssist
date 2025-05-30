@@ -1,9 +1,15 @@
-// Use prisma client like this
-import { prisma } from "./lib/prisma";
 import express from "express";
-import homeRouter from "./routes/homeRoute";
+import cors from 'cors';
+import authRoutes from "./routes/auth.route";
+import otpRoutes from "./routes/otp.route";
+
+
 const app = express();
 
+app.use(cors({origin: "http://localhost:5173" , credentials: true}));
+app.use(express.json());
 
-app.use("/api/v1/", homeRouter);
-app.listen(3000);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/otp', otpRoutes);
+
+app.listen(5000);
