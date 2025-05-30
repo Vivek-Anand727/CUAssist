@@ -25,7 +25,7 @@ export const signup = async (req: Request, res: Response) => {
       UID,
       password,
       profilePic = null,
-      role = "STUDENT",
+      role = "STUDENT", 
     } = req.body as SignUpRequestBody;
 
     if (!username || !UID || !password || !role) {
@@ -51,6 +51,7 @@ export const signup = async (req: Request, res: Response) => {
 
     const otp = generateOTP();
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    const OTPRequestedAt= new Date(Date.now())
     const hashedPassword = await bcrypt.hash(password, 10);
     const email = `${UID.trim().toLowerCase()}@cuchd.in`;
 
@@ -68,6 +69,7 @@ export const signup = async (req: Request, res: Response) => {
           role,
           OTP: otp,
           OTPExpiry: otpExpiry,
+          OTPRequestedAt
         },
       });
 

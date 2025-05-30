@@ -10,8 +10,7 @@ export const verifyOTP = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "UID and OTP are required." });
 
     const user = await prisma.user.findUnique({ where: { UID } });
-    if (!user)
-      return res.status(404).json({ message: "User not found." });
+    if (!user) return res.status(404).json({ message: "User not found." });
 
     if (user.isVerified)
       return res.status(400).json({ message: "User already verified." });
@@ -27,7 +26,12 @@ export const verifyOTP = async (req: Request, res: Response) => {
 
     await prisma.user.update({
       where: { UID },
-      data: { isVerified: true, OTP: null, OTPExpiry: null },
+      data: {
+        isVerified: true,
+        OTP: null,
+        OTPExpiry: null,
+        OTPRequestedAt: null,
+      },
     });
 
     return res.status(200).json({ message: "Email verified successfully." });
@@ -47,11 +51,8 @@ export const resendOTP = async (req: Request, res: Response) => {
     if (user.isVerified)
       return res.status(400).json({ message: "User is already verified." });
 
+    const lastSent = user.OTPRequestedAt;
     const now = new Date();
-    const lastSent = user.OTPExpiry
-      ? new Date(user.OTPExpiry.getTime() - 10 * 60 * 1000)
-      : null;
-
     if (lastSent && now.getTime() - lastSent.getTime() < 2 * 60 * 1000) {
       const secondsLeft = Math.ceil(
         (2 * 60 * 1000 - (now.getTime() - lastSent.getTime())) / 1000
@@ -63,10 +64,11 @@ export const resendOTP = async (req: Request, res: Response) => {
 
     const otp = generateOTP();
     const otpExpiry = new Date(now.getTime() + 10 * 60 * 1000);
+    const OTPRequestedAt= new Date(now.getTime())
 
     await prisma.user.update({
       where: { UID },
-      data: { OTP: otp, OTPExpiry: otpExpiry },
+      data: { OTP: otp, OTPExpiry: otpExpiry, OTPRequestedAt },
     });
 
     const email = `${UID.trim().toLowerCase()}@cuchd.in`;
