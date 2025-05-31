@@ -103,7 +103,7 @@ model ItemRequest {
 
 model Canteen {
   id           Int             @id @default(autoincrement())
-  canteenName  String
+  canteenName  String          @unique
   menuUrl      String?
   reviews      CanteenReview[]
 }
