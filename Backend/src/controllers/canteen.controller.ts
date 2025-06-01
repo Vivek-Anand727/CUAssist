@@ -9,7 +9,7 @@ interface UploadMenuRequestBody {
 
 export const uploadMenu = async(req: Request, res: Response) => {
     const {canteenName, menuUrl} = req.body ;
-    const userId = req.userId!;
+    const userId = req.userId;
     
     if (!canteenName || !menuUrl) {
         return res.status(400).json({ message: "Canteen name and menu URL are required" });
@@ -63,19 +63,8 @@ export const getMenuByCanteen = async(req: Request, res: Response) => {
 export const addReview = async(req: Request, res: Response) => {
 
     const { canteenName, rating, messageReview, foodTried } = req.body;
-    const  userId  = req.userId!;
+    const  userId  = req.userId;
 
-
-    /*
-
-     You can use either of the two ways 
-        1) const  userId  = req.userId!
-        2) const  userId  = req.userId
-           if (!userId) {
-               return res.status(401).json({ message: "Unauthorized. User ID is required." });
-           }
-
-    */
     
     try {
         const canteen = await prisma.canteen.findUnique({ where: { canteenName } });
