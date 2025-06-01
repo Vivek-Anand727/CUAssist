@@ -65,6 +65,9 @@ export const addReview = async(req: Request, res: Response) => {
     const { canteenName, rating, messageReview, foodTried } = req.body;
     const  userId  = req.userId;
 
+    if (!userId) {
+        return res.status(401).json({ message: "Unauthorized: userId missing" });
+      }
     
     try {
         const canteen = await prisma.canteen.findUnique({ where: { canteenName } });
