@@ -14,7 +14,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-    (req as any).userId  = decoded.userId;
+    req.userId  = decoded.userId;
     next();
   } catch (err) {
      res.status(403).json({ message: "Invalid or expired token." });
