@@ -76,6 +76,7 @@ model Item {
   id           String        @id @default(uuid())
   title        String
   description  String?
+  contactDetails String
   price        Float
   imageUrl     String?
   status       ItemStatus @default(AVAILABLE)
@@ -95,6 +96,7 @@ model ItemRequest {
   id          Int      @id @default(autoincrement())
   itemName    String
   description String
+  contactDetails String
   imageUrl    String?
   requesterId String
   requester   User     @relation(fields: [requesterId], references: [id])
@@ -103,7 +105,7 @@ model ItemRequest {
 
 model Canteen {
   id           Int             @id @default(autoincrement())
-  canteenName  String
+  canteenName  String          @unique
   menuUrl      String?
   reviews      CanteenReview[]
 }
